@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rainbow Timer and History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #particle {
+            width: 200px;
+            height: 200px;
+            background: conic-gradient(
+                red, orange, yellow, green, blue, indigo, violet, red
+            );
+            border-radius: 50%;
+            animation: rotate 5s linear infinite;
+            margin: 20px 0;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        #history {
+            width: 80%;
+            border: 1px solid black;
+            padding: 10px;
+            margin-top: 20px;
+            background: #fff;
+        }
+        .history-item {
+            padding: 10px;
+            border: 1px solid gray;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .history-item:nth-child(odd) {
+            background: #e0f7fa;
+        }
+        .history-item:nth-child(even) {
+            background: #fce4ec;
+        }
+    </style>
+</head>
+<body>
+    <div id="particle"></div>
+    <div id="timer">Timer: 00 : 00</div>
+    <div id="history">
+        <h3>History</h3>
+        <div id="history-content"></div>
+    </div>
+
+    <script>
+        // Timer functionality
+        const timerElement = document.getElementById('timer');
+        const historyContent = document.getElementById('history-content');
+        let historyIndex = 1;
+
+        function updateTimer() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const remainingSeconds = 30 - (seconds % 30);
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+            const totalMinutes = hours * 60 + minutes;
+
+            // Timer formatting
+            const formattedTime = `Timer: ${String(remainingSeconds).padStart(2, '0')} : ${String(remainingSeconds).padStart(2, '0')}`;
+            timerElement.textContent = formattedTime;
+
+            // Add new history entry every 30 seconds
+            if (seconds % 30 === 0) {
+                const result = historyIndex % 2 === 1 ? "BIG" : "SMALL";
+                const period = 1000 + totalMinutes * 2 + Math.floor(seconds / 30);
+                const date = now.toISOString().split('T')[0].replace(/-/g, '');
+
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `<strong>Period:</strong> ${date}1000${period} <br> <strong>Result:</strong> ${result}`;
+                historyContent.prepend(historyItem);
+
+                historyIndex++;
+            }
+        }
+
+        // Update timer every second
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
